@@ -1,0 +1,6 @@
+[submodule "src/angles"]
+	path = src/angles
+	url = https://github.com/ros/angles.git
+[submodule "src/velodyne"]
+	path = src/velodyne
+	url = https://github.com/ros-drivers/velodyne.git
