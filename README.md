@@ -48,14 +48,15 @@ Xsens MTi デバイスの ROS 2 ドライバーは公式には Humble をサポ�
     ```
 ### **ビルドエラーへの対応:**
 colcon build 実行時に以下のエラーが発生する場合:
-    ```bash
-    $ /usr/bin/ld: -lxscontroller not found: No such file or directory
-    $ /usr/bin/ld: -lxscommon not found: No such file or directory
-    $ /usr/bin/ld: -lxstypes not found: No such file or directory
-    ```
-    以下のコマンドを ROS 2 ワークスペース内で実行してください。
+
+```bash
+/usr/bin/ld: -lxscontroller not found: No such file or directory
+/usr/bin/ld: -lxscommon not found: No such file or directory
+/usr/bin/ld: -lxstypes not found: No such file or directory
+```
+以下のコマンドを ROS 2 ワークスペース内で実行してください。
     
-    ```bash
-    pushd src/bluespace_ai_xsens_ros_mti_driver/lib/xspublic && make && popd
-    ```
+```bash
+pushd src/bluespace_ai_xsens_ros_mti_driver/lib/xspublic && make && popd
+```
 これにより、リンクに必要な Xsens の公開ライブラリがコンパイルされます。
