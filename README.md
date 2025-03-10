@@ -49,9 +49,9 @@ Xsens MTi デバイスの ROS 2 ドライバーは公式には Humble をサポ�
 ### **ビルドエラーへの対応:**
 colcon build 実行時に以下のエラーが発生する場合:
     ```bash
-    /usr/bin/ld: -lxscontroller not found: No such file or directory
-    /usr/bin/ld: -lxscommon not found: No such file or directory
-    /usr/bin/ld: -lxstypes not found: No such file or directory
+    $ /usr/bin/ld: -lxscontroller not found: No such file or directory
+    $ /usr/bin/ld: -lxscommon not found: No such file or directory
+    $ /usr/bin/ld: -lxstypes not found: No such file or directory
     ```
     以下のコマンドを ROS 2 ワークスペース内で実行してください。
     
