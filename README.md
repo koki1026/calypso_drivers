@@ -54,7 +54,7 @@ colcon build 実行時に以下のエラーが発生する場合:
 /usr/bin/ld: -lxscommon not found: No such file or directory
 /usr/bin/ld: -lxstypes not found: No such file or directory
 ```
-以下のコマンドを ROS 2 ワークスペース内で実行してください。
+以下のコマンドをワークスペース内で実行してください。
     
 ```bash
 pushd src/bluespace_ai_xsens_ros_mti_driver/lib/xspublic && make && popd
