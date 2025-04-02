@@ -8,8 +8,6 @@
 - **RGB Camera(Grashopper) driver**
 - **MIC array driver**
 - **battery level driver**
-- **SONOR driver**
-
 
 
 
