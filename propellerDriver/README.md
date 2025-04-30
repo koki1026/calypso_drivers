@@ -6,6 +6,7 @@
 ### 1 Jetson Orin Nano - PCA9685接続
 詳細は以下のサイトを参考にすると良い
 [KOKENSHAの技術ブログ - Jetson nanoとPCA9685でサーボを動かそうとするときのI2Cエラー対処法！](URL "https://kokensha.xyz/jetson/jetson-nano-pca9685-i2c-error-resolution/")
+
 JetsonとPCA9685の接続は
 - VCC
 - SDA
