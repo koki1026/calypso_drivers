@@ -4,6 +4,7 @@
 [submodule "src/velodyne"]
 	path = src/velodyne
 	url = https://github.com/ros-drivers/velodyne.git
-[submodule "src/bluespace_ai_xsens_ros_mti_driver"]
+[submodule "src/bluespace_ai_xses_ros_mti_driver"]
 	path = src/bluespace_ai_xsens_ros_mti_driver
-	url = https://github.com/gmsanchez/bluespace_ai_xsens_ros_mti_driver.git
+	url = https://github.com/gmsanchez/bluespace_ai_xsens_ros_mti_driver
+	branch = ros2_0_humble
