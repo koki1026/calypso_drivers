@@ -49,6 +49,9 @@ pushd src/bluespace_ai_xsens_ros_mti_driver/lib/xspublic && make && popd
 ## 接続時のデバイスDetect
 launchファイル内のデバイスIDが1,0のどちらかに毎度変わるので, 認識しない場合は都度変更してあげてください
 
+# Velodyne 接続
+接続するVelodyneの種類(VLPxx)に適したconfigファイルにて, IPアドレスとポート番号を変更してください.
+
 # CalypsoのプロペラESCとJetson Orin Nanoを接続する
 
 ## PCA9685
