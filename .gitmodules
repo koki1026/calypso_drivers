@@ -8,3 +8,6 @@
 	path = src/bluespace_ai_xsens_ros_mti_driver
 	url = https://github.com/gmsanchez/bluespace_ai_xsens_ros_mti_driver
 	branch = ros2_0_humble
+[submodule "src/flir_camera_driver"]
+	path = src/flir_camera_driver
+	url = https://github.com/ros-drivers/flir_camera_driver.git
