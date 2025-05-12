@@ -46,6 +46,8 @@ pushd src/bluespace_ai_xsens_ros_mti_driver/lib/xspublic && make && popd
 ```
 これにより、リンクに必要な Xsens の公開ライブラリがコンパイルされます。
 
+## 接続時のデバイスDetect
+launchファイル内のデバイスIDが1,0のどちらかに毎度変わるので, 認識しない場合は都度変更してあげてください
 
 # CalypsoのプロペラESCとJetson Orin Nanoを接続する
 
