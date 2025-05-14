@@ -3,11 +3,11 @@
 	url = https://github.com/ros/angles.git
 [submodule "src/velodyne"]
 	path = src/velodyne
-	url = https://github.com/ros-drivers/velodyne.git
+	url = https://github.com/koki1026/velodyne.git
 [submodule "src/bluespace_ai_xses_ros_mti_driver"]
 	path = src/bluespace_ai_xsens_ros_mti_driver
-	url = https://github.com/gmsanchez/bluespace_ai_xsens_ros_mti_driver
+	url = https://github.com/koki1026/bluespace_ai_xsens_ros_mti_driver
 	branch = ros2_0_humble
 [submodule "src/flir_camera_driver"]
 	path = src/flir_camera_driver
-	url = https://github.com/ros-drivers/flir_camera_driver.git
+	url = https://github.com/kok1026/flir_camera_driver.git
