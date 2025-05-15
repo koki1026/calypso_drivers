@@ -6,12 +6,14 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     return LaunchDescription([
-        # Launch arguments (必要に応じて追加)
+        # Launch arguments
         DeclareLaunchArgument('stdout_line_buffered', default_value='1'),
         DeclareLaunchArgument('serial', default_value="'17550665'",),
-        
+        DeclareLaunchArgument('device_id', default_value='4'),
+
         # Include each sublaunch
 
+        # Include Xsens launch
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
                 PathJoinSubstitution([
@@ -24,6 +26,8 @@ def generate_launch_description():
                 'stdout_line_buffered': LaunchConfiguration('stdout_line_buffered')
             }.items()
         ),
+        
+        # Include camera launch
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
                 PathJoinSubstitution([FindPackageShare('launch_controller'), 'launch', 'camera_launch.py'])
@@ -35,5 +39,18 @@ def generate_launch_description():
                 'parameter_file': ''
             }.items()
         ),
-        # 他のlaunchも同様に追加
+
+        # Include thermal camera launch
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('launch_controller'),  # ← thermal_camera_launch.py があるパッケージ名
+                    'Sublaunch',                            # ← thermal_camera_launch.py のディレクトリ名
+                    'thermal_camera_launch.py'
+                ])
+            ]),
+            launch_arguments={
+                'device_id': LaunchConfiguration('device_id')  # ← 渡す
+            }.items()
+        ),
     ])
