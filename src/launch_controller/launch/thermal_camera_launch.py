@@ -12,7 +12,7 @@ def generate_launch_description():
         ),
 
         Node(
-            package='thermo_camera_publisher',
+            package='thermal_camera_driver',
             executable='thermal_camera_publisher',
             name='thermal_camera_publisher',
             parameters=[{
