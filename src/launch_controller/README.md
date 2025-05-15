@@ -39,3 +39,9 @@ GroupAction([
     )
 ])
 ```
+
+## thermal_camera_launch
+### base node
+thermal_camera_driver -> thermal_camera_publisher
+### param
+DeclareLaunchArgument( 'device_id', default_value='4'),

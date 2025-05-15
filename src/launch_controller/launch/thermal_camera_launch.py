@@ -7,7 +7,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
             'device_id',
-            default_value='4',  # ← 任意のデフォルトID
+            default_value='4',
             description='Device ID for the thermal camera'
         ),
 
