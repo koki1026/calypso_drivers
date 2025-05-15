@@ -45,7 +45,7 @@ def generate_launch_description():
             PythonLaunchDescriptionSource([
                 PathJoinSubstitution([
                     FindPackageShare('launch_controller'),  # ← thermal_camera_launch.py があるパッケージ名
-                    'Sublaunch',                            # ← thermal_camera_launch.py のディレクトリ名
+                    'launch',                            # ← thermal_camera_launch.py のディレクトリ名
                     'thermal_camera_launch.py'
                 ])
             ]),
