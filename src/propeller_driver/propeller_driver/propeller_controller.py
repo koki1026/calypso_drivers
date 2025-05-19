@@ -38,7 +38,6 @@ class PropellerController(Node):
         self.get_logger().info('プロペラコントローラーを初期化しました')
     
     def joy_callback(self, msg):
-        """ジョイスティックのコールバック関数"""
         # Logicoolコントローラーの左右スティックのY軸値を取得
         # 通常、左スティックはY軸(1)、右スティックはY軸(3)
         # ※コントローラーによって軸の割り当てが異なる場合は調整が必要
@@ -83,7 +82,7 @@ class PropellerController(Node):
         """タイマーコールバック - 保存されたジョイスティック入力からPWM値を計算して発行"""
         if not self.joy_received:
             # まだジョイスティック入力を受信していない場合
-            self.get_logger().info_throttle(5.0, 'ジョイスティック入力を待機中...')
+            self.get_logger().info('ジョイスティック入力を待機中...')
             return
         
         # PWM値に変換
