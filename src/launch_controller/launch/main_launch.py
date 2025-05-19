@@ -10,6 +10,8 @@ def generate_launch_description():
         DeclareLaunchArgument('stdout_line_buffered', default_value='1'),
         DeclareLaunchArgument('serial', default_value="'17550665'",),
         DeclareLaunchArgument('device_id', default_value='4'),
+        DeclareLaunchArgument('device_ip', default_value='192.168.1.201'),
+        DeclareLaunchArgument('port', default_value='2370'),
 
         # Include each sublaunch
 
@@ -53,4 +55,19 @@ def generate_launch_description():
                 'device_id': LaunchConfiguration('device_id')  # ← 渡す
             }.items()
         ),
+
+        # Include Velodyne launch
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('launch_controller'),  # ← velodyne_launch.py があるパッケージ名
+                    'launch',                            # ← velodyne_launch.py のディレクトリ名
+                    'velodyne_launch.py'
+                ])
+            ]),
+            launch_arguments={
+                'device_ip': LaunchConfiguration('device_ip'),
+                'port': LaunchConfiguration('port')
+            }.items()
+        )
     ])
