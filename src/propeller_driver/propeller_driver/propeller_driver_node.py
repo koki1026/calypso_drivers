@@ -5,14 +5,14 @@ from std_msgs.msg import Int32MultiArray
 from sensor_msgs.msg import Joy
 import numpy as np
 
-class PropellerController(Node):
+class PropellerDriverNode(Node):
     # ESC制御パラメータ
     ESC_REV = 244      # 最大逆回転
     ESC_NEUTRAL = 366  # 停止
     ESC_FWD = 488      # 最大正回転
     
     def __init__(self):
-        super().__init__('propeller_controller')
+        super().__init__('propeller_driver_node')
         
         # パブリッシャーの設定 - 2つのプロペラのPWM値を配列として送信
         self.publisher = self.create_publisher(
@@ -101,24 +101,24 @@ class PropellerController(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    controller = PropellerController()
+    node = PropellerDriverNode()
     
     try:
-        rclpy.spin(controller)
+        rclpy.spin(node)
     except KeyboardInterrupt:
-        controller.get_logger().info('キーボード割り込みによる終了')
+        node.get_logger().info('キーボード割り込みによる終了')
     except Exception as e:
-        controller.get_logger().error(f'エラーが発生しました: {str(e)}')
+        node.get_logger().error(f'エラーが発生しました: {str(e)}')
     finally:
         # 終了時の処理
         # プロペラを停止位置に設定
         msg = Int32MultiArray()
-        msg.data = [controller.ESC_NEUTRAL, controller.ESC_NEUTRAL]
-        controller.publisher.publish(msg)
-        controller.get_logger().info('プロペラを停止位置に設定しました')
+        msg.data = [node.ESC_NEUTRAL, node.ESC_NEUTRAL]
+        node.publisher.publish(msg)
+        node.get_logger().info('プロペラを停止位置に設定しました')
         
         # クリーンアップ
-        controller.destroy_node()
+        node.destroy_node()
         rclpy.shutdown()
 
 if __name__ == '__main__':

@@ -21,7 +21,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'propeller_driver = propeller_driver.propeller_controller:main',
+            'propeller_driver_node = propeller_driver.propeller_driver_node:main',
         ],
     },
 )
