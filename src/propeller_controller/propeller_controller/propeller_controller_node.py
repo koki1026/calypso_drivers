@@ -5,7 +5,7 @@ from std_msgs.msg import Int32MultiArray
 import time
 import Adafruit_PCA9685
 
-class PropellerDriver(Node):
+class PropellerControllerNode(Node):
     # ESC設定（4096分解能）
     ESC_REV = 244      # 最大逆回転
     ESC_NEUTRAL = 366  # 停止
@@ -13,7 +13,7 @@ class PropellerDriver(Node):
     ESC_CHANNELS = [0, 1]  # 接続しているチャンネル（左右のプロペラ）
     
     def __init__(self):
-        super().__init__('propeller_driver')
+        super().__init__('propeller_controller_node')
         
         # PCA9685の初期化
         self.pwm = Adafruit_PCA9685.PCA9685()
