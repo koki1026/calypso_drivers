@@ -11,9 +11,9 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 PathJoinSubstitution([
-                    FindPackageShare('propeller_driver'),
+                    FindPackageShare('propeller_teleop'),
                     'launch',
-                    'propeller_driver_launch.py'
+                    'propeller_teleop_launch.py'
                 ])
             )
         ),
