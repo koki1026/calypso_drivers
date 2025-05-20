@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-             'propeller_controller = propeller_controller.propeller_controller:main',
+             'propeller_controller_node = propeller_controller.propeller_controller_node:main',
         ],
     },
 )
