@@ -5,14 +5,14 @@ from std_msgs.msg import Int32MultiArray
 from sensor_msgs.msg import Joy
 import numpy as np
 
-class PropellerDriverNode(Node):
+class TeleopJoyNode(Node):
     # ESC制御パラメータ
     ESC_REV = 244      # 最大逆回転
     ESC_NEUTRAL = 366  # 停止
     ESC_FWD = 488      # 最大正回転
     
     def __init__(self):
-        super().__init__('propeller_driver_node')
+        super().__init__('teleop_joy_node')
         
         # パブリッシャーの設定 - 2つのプロペラのPWM値を配列として送信
         self.publisher = self.create_publisher(
@@ -101,7 +101,7 @@ class PropellerDriverNode(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = PropellerDriverNode()
+    node = TeleopJoyNode()
     
     try:
         rclpy.spin(node)

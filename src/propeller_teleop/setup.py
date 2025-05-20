@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'propeller_driver'
+package_name = 'propeller_teleop'
 
 setup(
     name=package_name,
@@ -10,7 +10,7 @@ setup(
     ('share/ament_index/resource_index/packages',
         ['resource/' + package_name]),
     ('share/' + package_name, ['package.xml']),
-    (f'share/{package_name}/launch', ['launch/propeller_driver_launch.py']),
+    (f'share/{package_name}/launch', ['launch/propeller_teleop_launch.py']),
 ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -21,7 +21,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'propeller_driver_node = propeller_driver.propeller_driver_node:main',
+            'teleop_joy_node = propeller_teleop.teleop_joy_node:main',
         ],
     },
 )
