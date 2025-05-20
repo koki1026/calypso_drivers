@@ -20,9 +20,9 @@ def generate_launch_description():
 
         # 2) PropellerController ノード
         Node(
-            package='propeller_driver',
-            executable='propeller_driver_node',
-            name='propeller_driver_node',
+            package='propeller_teleop',
+            executable='teleop_joy_node',
+            name='teleop_joy_node',
             output='screen',
             remappings=[
                 # joy のトピック名を変えているならここで合わせる
