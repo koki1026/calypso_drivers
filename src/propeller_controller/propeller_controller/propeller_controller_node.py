@@ -117,7 +117,7 @@ class PropellerControllerNode(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    driver = PropellerDriver()
+    driver = PropellerControllerNode()
     
     try:
         rclpy.spin(driver)

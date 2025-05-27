@@ -8,7 +8,7 @@ import numpy as np
 class TeleopJoyNode(Node):
     # ESC制御パラメータ
     ESC_REV = 250      # 最大逆回転
-    ESC_NEUTRAL = 375  # 停止
+    ESC_NEUTRAL = 400  # 停止
     ESC_FWD = 500      # 最大正回転
     
     def __init__(self):
@@ -46,7 +46,7 @@ class TeleopJoyNode(Node):
             # 通常は-1.0～1.0の範囲で、上が正、下が負の値
             if len(msg.axes) >= 4:  # 十分な軸があるか確認
                 self.left_stick_y = msg.axes[1]   # 左スティックY軸
-                self.right_stick_y = msg.axes[3]  # 右スティックY軸
+                self.right_stick_y = msg.axes[4]  # 右スティックY軸
                 
                 # Logicoolコントローラーの場合、Y軸は下が正のため反転が必要かもしれない
                 # 動作確認して必要に応じてコメントアウトを解除
@@ -61,21 +61,17 @@ class TeleopJoyNode(Node):
             self.get_logger().error(f'ジョイスティック入力の処理エラー: {str(e)}')
     
     def map_to_pwm(self, stick_value):
-        """スティックの値(-1.0～1.0)をPWM値(ESC_REV～ESC_FWD)にマッピング"""
-        # デッドゾーンの設定（微小な入力を無視）
+        """スティックの値(-1.0～1.0)をPWM値にマッピング（前後対称）"""
+        # デッドゾーンの設定
         deadzone = 0.05
         if abs(stick_value) < deadzone:
             return self.ESC_NEUTRAL
-        
-        # -1.0～1.0の値をESC_REV～ESC_FWDの範囲にマッピング
-        if stick_value >= 0:
-            # 正の値（前進）: NEUTRAL～FWD
-            pwm = self.ESC_NEUTRAL + stick_value * (self.ESC_FWD - self.ESC_NEUTRAL)
-        else:
-            # 負の値（後退）: REV～NEUTRAL
-            pwm = self.ESC_NEUTRAL + stick_value * (self.ESC_NEUTRAL - self.ESC_REV)
-        
-        # 整数値に丸める
+
+        # 最大オフセット（±いくつNEUTRALからずれるか）
+        max_offset = min(self.ESC_FWD - self.ESC_NEUTRAL, self.ESC_NEUTRAL - self.ESC_REV)
+
+        # オフセット値を計算してNEUTRALに足す
+        pwm = self.ESC_NEUTRAL + stick_value * max_offset
         return int(round(pwm))
     
     def timer_callback(self):
