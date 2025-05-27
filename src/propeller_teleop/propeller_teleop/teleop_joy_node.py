@@ -7,9 +7,9 @@ import numpy as np
 
 class TeleopJoyNode(Node):
     # ESC制御パラメータ
-    ESC_REV = 244      # 最大逆回転
-    ESC_NEUTRAL = 366  # 停止
-    ESC_FWD = 488      # 最大正回転
+    ESC_REV = 250      # 最大逆回転
+    ESC_NEUTRAL = 375  # 停止
+    ESC_FWD = 500      # 最大正回転
     
     def __init__(self):
         super().__init__('teleop_joy_node')
