@@ -1,4 +1,4 @@
-# rowlance_driver/rowlance_driver/rtsp_image_publisher.py
+# lowrance_driver/lowrance_driver/rtsp_image_publisher.py
 
 import rclpy
 from rclpy.node import Node

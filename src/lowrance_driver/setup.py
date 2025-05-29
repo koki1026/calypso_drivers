@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'rowlance_driver'
+package_name = 'lowrance_driver'
 
 setup(
     name=package_name,
@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'rtsp_image_publisher = rowlance_driver.rtsp_image_publisher:main',
+            'rtsp_image_publisher = lowrance_driver.rtsp_image_publisher:main',
         ],
     },
 )
