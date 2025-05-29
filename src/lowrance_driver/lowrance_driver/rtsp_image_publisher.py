@@ -22,7 +22,6 @@ class RTSPImagePublisher(Node):
         if ret:
             msg = self.bridge.cv2_to_imgmsg(frame, encoding='bgr8')
             self.publisher_.publish(msg)
-            self.get_logger().warn("取得成功: RTSPストリームから画像を取得できました")
         else:
             self.get_logger().warn("RTSPストリームから画像を取得できませんでした")
 
