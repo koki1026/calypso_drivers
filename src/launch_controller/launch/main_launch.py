@@ -69,5 +69,16 @@ def generate_launch_description():
                 'device_ip': LaunchConfiguration('device_ip'),
                 'port': LaunchConfiguration('port')
             }.items()
+        ),
+        
+        # Include RTSP image publisher launch
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('launch_controller'),  # ← lowrance_driver があるパッケージ名
+                    'launch',                            # ← lowrance_driver の launch ディレクトリ名
+                    'lowrance_rtsp_launch.py'
+                ])
+            ])
         )
     ])
