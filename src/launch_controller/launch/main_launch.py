@@ -81,4 +81,15 @@ def generate_launch_description():
                 ])
             ])
         )
+
+        # Include propeller control launch
+        , IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('launch_controller'),  # ← propeller_teleop があるパッケージ名
+                    'launch',                            # ← propeller_teleop の launch ディレクトリ名
+                    'propeller_controller_launch.py'
+                ])
+            ])
+        )
     ])
