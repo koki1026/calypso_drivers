@@ -20,9 +20,11 @@ def generate_launch_description():
         DeclareLaunchArgument('read_fast', default_value='false'),
         DeclareLaunchArgument('repeat_delay', default_value='0.0'),
         DeclareLaunchArgument('frame_id', default_value='velodyne'),
-        DeclareLaunchArgument('model', default_value='32C'),
+        # DeclareLaunchArgument('model', default_value='32C'),
+        DeclareLaunchArgument('model', default_value='VLP16'),
         DeclareLaunchArgument('rpm', default_value='600.0'),
-        DeclareLaunchArgument('port', default_value='2368'),
+        # DeclareLaunchArgument('port', default_value='2368'),
+        DeclareLaunchArgument('port', default_value='2370'),
         DeclareLaunchArgument('timestamp_first_packet', default_value='false'),
     ]
 
@@ -30,7 +32,8 @@ def generate_launch_description():
     def launch_setup(context, *args, **kwargs):
         # --- A) driver ノード用パラメータ YAML 読み込み + 上書き ---
         pkg_share = get_package_share_directory('velodyne_driver')
-        yaml_path = os.path.join(pkg_share, 'config', 'VLP32C-velodyne_driver_node-params.yaml')
+        # yaml_path = os.path.join(pkg_share, 'config', 'VLP32C-velodyne_driver_node-params.yaml')
+        yaml_path = os.path.join(pkg_share, 'config', 'VLP16-velodyne_driver_node-params.yaml')
         with open(yaml_path, 'r') as f:
             all_params = yaml.safe_load(f)
 
@@ -59,10 +62,15 @@ def generate_launch_description():
         )
 
         # --- B) transform ノード ---
+        # calib = os.path.join(
+        #     get_package_share_directory('velodyne_pointcloud'),
+        #     'params',
+        #     'VeloView-VLP-32C.yaml'
+        # )
         calib = os.path.join(
             get_package_share_directory('velodyne_pointcloud'),
             'params',
-            'VeloView-VLP-32C.yaml'
+            'VLP16db.yaml'
         )
         transform_node = Node(
             package='velodyne_pointcloud',
