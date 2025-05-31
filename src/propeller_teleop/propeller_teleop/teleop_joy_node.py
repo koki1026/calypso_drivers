@@ -8,7 +8,7 @@ import numpy as np
 
 class TeleopJoyNode(Node):
     # ESC制御パラメータ
-    ESC_REV = 250      # 最大逆回転
+    ESC_REV = 300      # 最大逆回転
     ESC_NEUTRAL = 400  # 停止
     ESC_FWD = 500      # 最大正回転
     

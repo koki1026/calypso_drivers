@@ -8,7 +8,7 @@ import Adafruit_PCA9685
 
 class PropellerControllerNode(Node):
     # ESC設定（4096分解能）
-    ESC_REV = 250      # 最大逆回転
+    ESC_REV = 300      # 最大逆回転
     ESC_NEUTRAL = 400  # 停止
     ESC_FWD = 500      # 最大正回転
     ESC_CHANNELS = [0, 1]  # 接続しているチャンネル（左右のプロペラ）
