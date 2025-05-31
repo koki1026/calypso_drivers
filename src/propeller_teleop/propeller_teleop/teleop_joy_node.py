@@ -19,6 +19,11 @@ class TeleopJoyNode(Node):
             Int32MultiArray, 
             'propeller_pwm', 
             10)
+
+        self.publisher = self.create_publisher(
+            Boolean, 
+            'life_cycle_pwm', 
+            1)
         
         # ジョイスティック入力のサブスクライバー設定
         self.joy_subscription = self.create_subscription(
@@ -27,9 +32,10 @@ class TeleopJoyNode(Node):
             self.joy_callback,
             10)
         
-        # タイマーを設定（0.1秒間隔）
+        # タイマーを設定（0.1秒間隔 と 1秒間隔）
         self.timer = self.create_timer(0.1, self.timer_callback)
-        
+        self.life_cycle_timer = self.create_timer(1, self.timer_callback)
+
         # ジョイスティックの状態を保存する変数
         self.left_stick_y = 0.0
         self.right_stick_y = 0.0
@@ -94,6 +100,12 @@ class TeleopJoyNode(Node):
         
         # ログ出力（デバッグ用）
         self.get_logger().debug(f'発行: 左PWM={left_pwm}, 右PWM={right_pwm}')
+
+    def life_cycle_callback(self):
+        """ライフサイクルコールバック - 定期的にライフサイクルメッセージを発行"""
+        msg = Boolean()
+        msg.data = True
+        self.publisher.publish(msg)
 
 def main(args=None):
     rclpy.init(args=args)

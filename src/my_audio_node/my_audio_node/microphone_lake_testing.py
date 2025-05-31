@@ -22,7 +22,7 @@ class AudioLocalizationNode(Node):
         self.NUM_MICROPHONES = 8
         self.SAMPLE_RATE = 44100
         self.CHUNK_SIZE = 1024
-        self.DEVICE_INDEX = 10
+        self.DEVICE_INDEX = 24
         self.THRESHOLD = 0.005
         self.SOUND_SPEED = 343
         self.SAVE_FOLDER = os.path.expanduser("~/ros2_ws/voice_detections")
