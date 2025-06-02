@@ -2,12 +2,13 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Int32MultiArray
+from std_msgs.msg import Bool
 from sensor_msgs.msg import Joy
 import numpy as np
 
 class TeleopJoyNode(Node):
     # ESC制御パラメータ
-    ESC_REV = 250      # 最大逆回転
+    ESC_REV = 300      # 最大逆回転
     ESC_NEUTRAL = 400  # 停止
     ESC_FWD = 500      # 最大正回転
     
@@ -15,13 +16,13 @@ class TeleopJoyNode(Node):
         super().__init__('teleop_joy_node')
         
         # パブリッシャーの設定 - 2つのプロペラのPWM値を配列として送信
-        self.publisher = self.create_publisher(
+        self.propeller_publisher = self.create_publisher(
             Int32MultiArray, 
             'propeller_pwm', 
             10)
 
-        self.publisher = self.create_publisher(
-            Boolean, 
+        self.lifecycle_publisher = self.create_publisher(
+            Bool, 
             'life_cycle_pwm', 
             1)
         
@@ -34,7 +35,7 @@ class TeleopJoyNode(Node):
         
         # タイマーを設定（0.1秒間隔 と 1秒間隔）
         self.timer = self.create_timer(0.1, self.timer_callback)
-        self.life_cycle_timer = self.create_timer(1, self.timer_callback)
+        self.life_cycle_timer = self.create_timer(1, self.life_cycle_callback)
 
         # ジョイスティックの状態を保存する変数
         self.left_stick_y = 0.0
@@ -96,16 +97,16 @@ class TeleopJoyNode(Node):
         msg.data = [left_pwm, right_pwm]
         
         # メッセージのパブリッシュ
-        self.publisher.publish(msg)
+        self.propeller_publisher.publish(msg)
         
         # ログ出力（デバッグ用）
         self.get_logger().debug(f'発行: 左PWM={left_pwm}, 右PWM={right_pwm}')
 
     def life_cycle_callback(self):
         """ライフサイクルコールバック - 定期的にライフサイクルメッセージを発行"""
-        msg = Boolean()
+        msg = Bool()
         msg.data = True
-        self.publisher.publish(msg)
+        self.lifecycle_publisher.publish(msg)
 
 def main(args=None):
     rclpy.init(args=args)

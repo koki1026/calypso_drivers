@@ -2,12 +2,13 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Int32MultiArray
+from std_msgs.msg import Bool
 import time
 import Adafruit_PCA9685
 
 class PropellerControllerNode(Node):
     # ESC設定（4096分解能）
-    ESC_REV = 250      # 最大逆回転
+    ESC_REV = 300      # 最大逆回転
     ESC_NEUTRAL = 400  # 停止
     ESC_FWD = 500      # 最大正回転
     ESC_CHANNELS = [0, 1]  # 接続しているチャンネル（左右のプロペラ）
@@ -25,6 +26,22 @@ class PropellerControllerNode(Node):
             'propeller_pwm',
             self.pwm_callback,
             10)
+        
+        # ── 「life_cycle_pwm」を受け取るサブスクライバー ──
+        self.life_cycle_sub = self.create_subscription(
+            Bool,
+            'life_cycle_pwm',
+            self.life_cycle_callback,
+            1)
+        
+        # ── 最終受信時刻を保持する変数を初期化 ──
+        # ノード起動直後は「今」をセットしておく
+        self.last_life_cycle_time = time.time()
+        
+        # ── 1秒ごとにタイムアウトチェックするタイマー設定 ──
+        self.life_cycle_timeout_timer = self.create_timer(
+            1.0, 
+            self.check_life_cycle_timeout)
         
         # 現在のPWM値を保存する変数
         self.current_pwm = [self.ESC_NEUTRAL, self.ESC_NEUTRAL]
@@ -76,6 +93,36 @@ class PropellerControllerNode(Node):
             self.get_logger().error(f'PWM設定エラー: {str(e)}')
             # エラー時は安全のため停止
             self.emergency_stop()
+
+    def life_cycle_callback(self, msg: Bool):
+        """life_cycle_pwm トピックを受信したときのコールバック関数"""
+        # Bool メッセージを受信したら、最終受信時刻を更新する
+        if msg.data:
+            self.last_life_cycle_time = time.time()
+            self.get_logger().debug('life_cycle_pwm を受信: タイムアウトカウンターをリセット')
+        else:
+            # もし False が来た場合でも、一度は「受信あり」として扱う
+            self.last_life_cycle_time = time.time()
+            self.get_logger().debug('life_cycle_pwm (False) を受信: タイムアウトカウンターをリセット')
+    
+    def check_life_cycle_timeout(self):
+        """
+        定期的に呼ばれるタイマーコールバック。
+        最終受信から一定時間(5秒)経過していたらプロペラを停止（中立 PWM）する
+        """
+        elapsed = time.time() - self.last_life_cycle_time
+        if elapsed >= self.TIMEOUT_SEC:
+            # 5 秒以上「life_cycle_pwm」を受け取っていない場合
+            self.get_logger().warn(f'life_cycle_pwm を {int(elapsed)} 秒受信していません。自動停止を実行します。')
+            
+            # PWM を中立（＝ ESC_NEUTRAL）に戻す
+            for idx, ch in enumerate(self.ESC_CHANNELS):
+                self.pwm.set_pwm(ch, 0, self.ESC_NEUTRAL)
+            self.current_pwm = [self.ESC_NEUTRAL, self.ESC_NEUTRAL]
+            
+            # タイムアウトが発生して停止させたら、再度同じ処理を繰り返さないように
+            # 最終受信時刻を「今」にリセットしておく
+            self.last_life_cycle_time = time.time()
     
     def validate_pwm(self, pwm_value):
         """PWM値が有効範囲内かチェックし、範囲内に収める"""
