@@ -42,6 +42,9 @@ class PropellerControllerNode(Node):
         self.life_cycle_timeout_timer = self.create_timer(
             1.0, 
             self.check_life_cycle_timeout)
+
+        # タイムアウトの閾値（5秒）
+        self.TIMEOUT_SEC = 5.0
         
         # 現在のPWM値を保存する変数
         self.current_pwm = [self.ESC_NEUTRAL, self.ESC_NEUTRAL]
