@@ -123,7 +123,7 @@ def main(args=None):
         # プロペラを停止位置に設定
         msg = Int32MultiArray()
         msg.data = [node.ESC_NEUTRAL, node.ESC_NEUTRAL]
-        node.publisher.publish(msg)
+        node.propeller_publisher.publish(msg)
         node.get_logger().info('プロペラを停止位置に設定しました')
         
         # クリーンアップ
