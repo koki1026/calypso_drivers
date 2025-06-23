@@ -144,7 +144,7 @@ def main():
             print(f"INA219候補が見つかりました: {[hex(addr) for addr in ina219_candidates]}")
             
             # 最初の候補でテスト
-            test_ina219_if_found(ina219_candidates[0])
+            #test_ina219_if_found(ina219_candidates[0])
         else:
             print("INA219ではない他のI2Cデバイスが検出されました")
             print("INA219の配線とアドレス設定を確認してください")
