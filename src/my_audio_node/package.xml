@@ -6,7 +6,9 @@
   <description>TODO: Package description</description>
   <maintainer email="akash.hira.c3@s.gifu-u.ac.jp">hira</maintainer>
   <license>TODO: License declaration</license>
-
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>numpy</exec_depend>
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>

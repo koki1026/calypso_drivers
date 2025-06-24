@@ -8,6 +8,8 @@ from scipy.signal import butter, filtfilt
 from std_msgs.msg import Float32MultiArray
 import datetime
 import csv
+import threading
+
 
 class AudioLocalizationNode(Node):
     def __init__(self):
@@ -22,8 +24,9 @@ class AudioLocalizationNode(Node):
         self.NUM_MICROPHONES = 8
         self.SAMPLE_RATE = 44100
         self.CHUNK_SIZE = 1024
-        self.DEVICE_INDEX = 24
-        self.THRESHOLD = 0.005
+        dev = sd.default.device
+        self.DEVICE_INDEX = dev[0] if isinstance(dev, (list, tuple)) else dev
+        self.THRESHOLD = 0.001
         self.SOUND_SPEED = 343
         self.SAVE_FOLDER = os.path.expanduser("~/ros2_ws/voice_detections")
         os.makedirs(self.SAVE_FOLDER, exist_ok=True)
@@ -33,18 +36,18 @@ class AudioLocalizationNode(Node):
                 writer = csv.writer(csvfile)
                 writer.writerow(["Timestamp", "X (m)", "Y (m)"])
 
-        self.board_length = 65.0
-        self.board_width = 35.5
+        self.board_length = 89.0
+        self.board_width = 59.0
 
         self.mic_positions = {
-            0: (0.0, 0.0),
-            1: (33.0, 0.0),
-            2: (65.0, 0.0),
-            3: (0.0, 35.5),
-            4: (33.0, 35.5),
-            5: (65.0, 35.5),
-            6: (0.0, 17.75),
-            7: (65.0, 17.75),
+            0: (0, 0),
+            1: (44.5, 0),
+            2: (89, 0),
+            3: (0, 59),
+            4: (44.5, 59),
+            5: (89, 59),
+            6: (0, 29.5),
+            7: (89, 29.5)
         }
 
         self.reference_mic = 0
@@ -54,7 +57,7 @@ class AudioLocalizationNode(Node):
         ]
 
         self.get_logger().info("Audio node initialized. Starting stream...")
-        self.start_stream()
+        
 
     def bandpass_filter(self, data, lowcut, highcut, fs, order=5):
         nyquist = 0.5 * fs
@@ -91,16 +94,19 @@ class AudioLocalizationNode(Node):
             return ref_pos
 
     def callback(self, indata, frames, time, status):
+        print("🔔 callback fired") 
         audio_data = np.array(indata)
-        filtered_audio = np.zeros_like(audio_data)
-        for i in range(self.NUM_MICROPHONES):
-            filtered_audio[:, i] = self.bandpass_filter(audio_data[:, i], 300.0, 3400.0, self.SAMPLE_RATE)
+        filtered_audio = audio_data.copy()
+        # filtered_audio = np.zeros_like(audio_data)
+        # for i in range(self.NUM_MICROPHONES):
+        #   filtered_audio[:, i] = self.bandpass_filter(audio_data[:, i], 300.0, 3400.0, self.SAMPLE_RATE)
 
         for i in range(self.NUM_MICROPHONES):
             mic_msg = Float32MultiArray()
             mic_msg.data = filtered_audio[:, i].tolist()
             self.mic_publishers[i].publish(mic_msg)
-            
+            print(f"📤 Published mic{i+1}: {len(mic_msg.data)} samples")
+
 
         ref_signal = filtered_audio[:, self.reference_mic]
         energy = np.sum(ref_signal**2)
@@ -169,11 +175,24 @@ class AudioLocalizationNode(Node):
                 self.get_logger().info("Keyboard interrupt detected, stopping...")
 
 def main(args=None):
+    # 1. Initialize ROS and create the node
     rclpy.init(args=args)
     node = AudioLocalizationNode()
+
+    # 2. Launch the audio InputStream in a background thread
+    audio_thread = threading.Thread(
+        target=node.start_stream,  # this runs your callback loop
+        daemon=True                # so it won’t block shutdown
+    )
+    audio_thread.start()
+
+    # 3. Now let ROS run its executor so your publishers actually send data
     rclpy.spin(node)
+
+    # 4. Clean up on exit
     node.destroy_node()
     rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()

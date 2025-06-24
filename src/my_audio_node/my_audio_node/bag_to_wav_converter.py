@@ -39,13 +39,11 @@ class BagToWavSaver(Node):
                 self.get_logger().info(f"Saved: {filename}")
                 self.buffers[mic_index] = []
         return callback
-
 def main(args=None):
     rclpy.init(args=args)
     node = BagToWavSaver()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
-
 if __name__ == '__main__':
     main()
