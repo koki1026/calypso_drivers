@@ -142,9 +142,12 @@ def main():
         if any(addr in [0x40, 0x41, 0x44, 0x45] for addr in result):
             ina219_candidates = [addr for addr in result if addr in [0x40, 0x41, 0x44, 0x45]]
             print(f"INA219候補が見つかりました: {[hex(addr) for addr in ina219_candidates]}")
-            
-            # 最初の候補でテスト
-            test_ina219_if_found(ina219_candidates[0])
+
+            while True:
+                # 最初の候補でテスト
+                test_ina219_if_found(ina219_candidates[0])
+                time.sleep(0.5)
+
         else:
             print("INA219ではない他のI2Cデバイスが検出されました")
             print("INA219の配線とアドレス設定を確認してください")
