@@ -48,7 +48,7 @@ def detailed_i2c_test():
                     print(f"     0x{device:02X} ({device})")
                 
                 # INA219の一般的なアドレスをチェック
-                ina219_addresses = [0x40, 0x41, 0x44, 0x45]
+                ina219_addresses = [0x40, 0x3c, 0x44, 0x45]
                 found_ina219 = [addr for addr in ina219_addresses if addr in devices]
                 
                 if found_ina219:
@@ -144,7 +144,7 @@ def main():
             print(f"INA219候補が見つかりました: {[hex(addr) for addr in ina219_candidates]}")
             
             # 最初の候補でテスト
-            #test_ina219_if_found(ina219_candidates[0])
+            test_ina219_if_found(ina219_candidates[0])
         else:
             print("INA219ではない他のI2Cデバイスが検出されました")
             print("INA219の配線とアドレス設定を確認してください")
