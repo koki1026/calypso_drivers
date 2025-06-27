@@ -11,7 +11,7 @@ class FlowSensorNode(Node):
         super().__init__('flow_sensor_node')
 
         # GPIO設定
-        self.flow_pin = 7  # BOARDモードでのピン番号
+        self.flow_pin = 31  # BOARDモードでのピン番号
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.flow_pin, GPIO.IN)
 
