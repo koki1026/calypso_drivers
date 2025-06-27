@@ -1,22 +1,30 @@
-import serial
+from pymodbus.client import ModbusSerialClient
+import time
 
-ser = serial.Serial(
-    port='/dev/ttyUSB0',
+
+client = ModbusSerialClient(
+    port="/dev/ttyUSB0",
     baudrate=9600,
-    bytesize=serial.EIGHTBITS,
-    parity=serial.PARITY_NONE,
-    stopbits=serial.STOPBITS_ONE,
-    timeout=1
+    parity="N",
+    stopbits=1,
+    bytesize=8
 )
 
-print("受信中（1バイトずつ表示）:")
+if client.connect():
+    print("接続成功")
 
-try:
     while True:
-        byte = ser.read()
-        if byte:
-            print(byte.hex(), end=' ')
-except KeyboardInterrupt:
-    print("\n終了")
-finally:
-    ser.close()
+        # アドレス0番から2レジスタ読み込み、スレーブアドレスは1
+        result = client.read_holding_registers(address=0, count=12, slave=1)
+        if result.isError():
+            print("エラー:", result)
+            break
+        else:
+            print("読み取り成功:", result.registers)
+
+        # 1秒待機して再試行
+        time.sleep(0.5)
+
+    client.close()
+else:
+    print("接続失敗")
