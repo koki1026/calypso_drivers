@@ -12,7 +12,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     # 1) launch 引数を宣言
     args = [
-        DeclareLaunchArgument('device_ip', default_value='192.168.1.201'),
+        DeclareLaunchArgument('device_ip', default_value='192.168.100.201'),
         DeclareLaunchArgument('gps_time', default_value='false'),
         DeclareLaunchArgument('time_offset', default_value='0.0'),
         DeclareLaunchArgument('enabled', default_value='true'),
