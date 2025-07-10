@@ -16,14 +16,14 @@ class ImageRepubNode(Node):
             '/thermal_image': '/thermal_image/compressed'
         }
 
-        self.subscribers = {}
-        self.publishers = {}
+        self.subscribers_dict = {}
+        self.publishers_dict = {}
         self.last_pub_times = {}
 
         for in_topic, out_topic in self.topics.items():
-            self.subscribers[in_topic] = self.create_subscription(
+            self.subscribers_dict[in_topic] = self.create_subscription(
                 Image, in_topic, self.make_callback(in_topic), 10)
-            self.publishers[in_topic] = self.create_publisher(
+            self.publishers_dict[in_topic] = self.create_publisher(
                 CompressedImage, out_topic, 10)
             self.last_pub_times[in_topic] = 0.0
 
@@ -43,7 +43,7 @@ class ImageRepubNode(Node):
                 comp_msg.header = msg.header
                 comp_msg.format = "jpeg"
                 comp_msg.data = buffer.tobytes()
-                self.publishers[topic_name].publish(comp_msg)
+                self.publishers_dict[topic_name].publish(comp_msg)
                 self.last_pub_times[topic_name] = now
             except Exception as e:
                 self.get_logger().error(f"Error in {topic_name}: {e}")
