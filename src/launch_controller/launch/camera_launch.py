@@ -17,7 +17,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'camera_type',
-            default_value='blackfly_s',
+            default_value='grasshopper',
             description='Type of camera (e.g., blackfly_s, chameleon, grasshopper, etc.)'
         ),
         DeclareLaunchArgument(
