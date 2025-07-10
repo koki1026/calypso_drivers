@@ -17,7 +17,9 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'camera_type',
+            //flirの種類を識別するクラス
             default_value='grasshopper',
+
             description='Type of camera (e.g., blackfly_s, chameleon, grasshopper, etc.)'
         ),
         DeclareLaunchArgument(
@@ -55,6 +57,18 @@ def generate_launch_description():
                 executable='image_proc',
                 name='image_proc',
                 output='screen',
+                parameters=[{
+                    #QoS設定でキューサイズを制限
+                    'use_sim_time': False,
+                    'qos_overrides': {
+                        'image': {
+                            'depth': 1,
+                            'history': 'keep_last',
+                            'reliability': 'best_effort'
+                        }
+                    }
+                }],
+                            
                 remappings=[
                     ('image', 'image_raw'),
                     ('camera_info', 'camera_info')
