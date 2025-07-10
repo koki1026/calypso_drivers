@@ -17,7 +17,9 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'camera_type',
-            default_value='chameleon',
+            //flirの種類を識別するクラス
+            default_value='grasshopper',
+
             description='Type of camera (e.g., blackfly_s, chameleon, grasshopper, etc.)'
         ),
         DeclareLaunchArgument(
