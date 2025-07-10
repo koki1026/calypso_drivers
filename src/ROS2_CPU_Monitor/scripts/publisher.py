@@ -1,56 +1,73 @@
 #!/usr/bin/env python3
-
 import rclpy
 from rclpy.node import Node
 import psutil
+import time
 
-# 作成したカスタムメッセージをインポート
-# <your_package_name> は実際のパッケージ名に置き換えてください
-from cpu_monitor.msg import Memory
-from std_msgs.msg import Float32
+# 標準メッセージの型をインポート
+from std_msgs.msg import Float32, Float64
 
-class CpuMemoryPublisher(Node):
-
+class SystemMonitorPublisher(Node):
     def __init__(self):
-        super().__init__('cpu_memory_publisher')
+        super().__init__('system_monitor_publisher')
 
-        self.cpu_publisher_ = self.create_publisher(Float32, 'cpu_usage', 10)
-        self.memory_publisher_ = self.create_publisher(Float32, 'memory_usage', 10)
+        # --- 5つのパブリッシャーを作成 ---
+        self.cpu_pub = self.create_publisher(Float32, 'system/cpu_percent', 10)
+        self.mem_pub = self.create_publisher(Float32, 'system/memory_percent', 10)
+        self.disk_pub = self.create_publisher(Float32, 'system/disk_percent', 10)
+        self.net_sent_pub = self.create_publisher(Float64, 'system/net_sent_rate', 10)
+        self.net_recv_pub = self.create_publisher(Float64, 'system/net_recv_rate', 10)
 
-        timer_period = 5.0
+        timer_period = 2.0
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
-        self.get_logger().info('CPU and Memory Usage Publisher Node has been started.')
-        self.get_logger().info('Publishing to /cpu_memory_usage topic every 1 second.')
-
-        psutil.cpu_percent(interval=None)
+        self.last_net_io = psutil.net_io_counters()
+        self.last_time = time.time()
+        self.get_logger().info('System Monitor Publisher Node has been started.')
 
     def timer_callback(self):
+        current_time = time.time()
+        delta_time = current_time - self.last_time
 
-        cpu_percent = psutil.cpu_percent(interval=None)
-        memory_percent = psutil.virtual_memory().percent
+        # --- 各メトリクスを計算して変数に格納 ---
+        cpu_val = psutil.cpu_percent(interval=None)
+        mem_val = psutil.virtual_memory().percent
+        disk_val = psutil.disk_usage('/').percent
+        
+        # --- 変数を使ってメッセージを配信 ---
+        self.cpu_pub.publish(Float32(data=cpu_val))
+        self.mem_pub.publish(Float32(data=mem_val))
+        self.disk_pub.publish(Float32(data=disk_val))
 
-        cpu_msg = Float32()
-        cpu_msg.data = float(cpu_percent)
-        self.cpu_publisher_.publish(cpu_msg)
+        # --- ネットワーク通信量を計算 & 配信 ---
+        current_net_io = psutil.net_io_counters()
+        sent_rate = 0.0
+        recv_rate = 0.0
+        if delta_time > 0:
+            sent_rate = (current_net_io.bytes_sent - self.last_net_io.bytes_sent) / delta_time
+            recv_rate = (current_net_io.bytes_recv - self.last_net_io.bytes_recv) / delta_time
+            self.net_sent_pub.publish(Float64(data=sent_rate))
+            self.net_recv_pub.publish(Float64(data=recv_rate))
 
-        memory_msg = Float32()
-        memory_msg.data = float(memory_percent)
-        self.memory_publisher_.publish(memory_msg)
+        # --- 変数を使ってログ出力 ---
+        self.get_logger().info(
+            f'CPU: {cpu_val:.1f}% | '
+            f'Mem: {mem_val:.1f}% | '
+            f'Disk: {disk_val:.1f}% | '
+            f'Net Sent: {sent_rate/1024:.2f} KB/s | '
+            f'Net Recv: {recv_rate/1024:.2f} KB/s'
+        )
 
-        self.get_logger().info(f'Publishing: [CPU: {cpu_msg.data:.2f}%] [Memory: {memory_msg.data:.2f}%]')
+        # 次回計算のために現在の値を保存
+        self.last_net_io = current_net_io
+        self.last_time = current_time
 
 def main(args=None):
     rclpy.init(args=args)
-    try:
-        cpu_memory_publisher = CpuMemoryPublisher()
-        rclpy.spin(cpu_memory_publisher)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        if 'cpu_memory_publisher' in locals() and rclpy.ok():
-            cpu_memory_publisher.destroy_node()
-            rclpy.shutdown()
+    monitor_publisher = SystemMonitorPublisher()
+    rclpy.spin(monitor_publisher)
+    monitor_publisher.destroy_node()
+    rclpy.shutdown()
 
 if __name__ == '__main__':
     main()

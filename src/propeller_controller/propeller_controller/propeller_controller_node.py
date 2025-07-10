@@ -17,7 +17,7 @@ class PropellerControllerNode(Node):
         super().__init__('propeller_controller_node')
         
         # PCA9685の初期化
-        self.pwm = Adafruit_PCA9685.PCA9685()
+        self.pwm = Adafruit_PCA9685.PCA9685(address=0x41)
         self.pwm.set_pwm_freq(60)  # 60Hz
         
         # サブスクライバーの設定
