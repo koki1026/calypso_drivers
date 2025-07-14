@@ -11,11 +11,16 @@ class LowrancePublisher(Node):
         super().__init__('lowrance_publisher')
         self.publisher_ = self.create_publisher(Image, '/lowrance/image_raw', 10)
         self.timer = self.create_timer(0.1, self.timer_callback)  # 10Hz
-        self.cap = cv2.VideoCapture(4)
-        self.bridge = CvBridge()
 
+        # device_idの取得
+        self.declare_parameter('device_id', 0)
+        device_id = self.get_parameter('device_id').get_parameter_value().integer_value
+
+        self.cap = cv2.VideoCapture(device_id)
         if not self.cap.isOpened():
-            self.get_logger().error('カメラが開けませんでした')
+            self.get_logger().error(f'カメラデバイス {device_id} を開けませんでした。')
+            return
+        self.bridge = CvBridge()
 
     def timer_callback(self):
         ret, frame = self.cap.read()
