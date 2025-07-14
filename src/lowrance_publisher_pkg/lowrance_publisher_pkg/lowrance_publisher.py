@@ -26,11 +26,11 @@ class LowrancePublisher(Node):
         ret, frame = self.cap.read()
         if ret:
             height, width, _ = frame.shape
-            if width >= 480:
-                # 横方向中央をトリミング（1280x480 → 480x480）
-                center_x = width // 2
-                half_crop = 240
-                cropped = frame[:, center_x - half_crop:center_x + half_crop]
+            crop_width = 480  # ← ここでトリミング幅を指定
+
+            if width >= crop_width:
+                # 左端からcrop_widthピクセルを切り出す
+                cropped = frame[:, 0:crop_width]
             else:
                 self.get_logger().warn(f'フレーム幅が480未満のためトリミングできません（現在: {width}px）')
                 cropped = frame
