@@ -9,7 +9,7 @@ from sensor_msgs.msg import Image
 class LowrancePublisher(Node):
     def __init__(self):
         super().__init__('lowrance_publisher')
-        self.publisher_ = self.create_publisher(Image, '/lowrance/image_raw', 10)
+        self.publisher_ = self.create_publisher(Image, '/image_raw', 10)
         self.timer = self.create_timer(0.1, self.timer_callback)  # 10Hz
 
         # device_idの取得
