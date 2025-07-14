@@ -26,7 +26,7 @@ class LowrancePublisher(Node):
         ret, frame = self.cap.read()
         if ret:
             height, width, _ = frame.shape
-            crop_width = 480  # ← ここでトリミング幅を指定
+            crop_width = 640  # ← ここでトリミング幅を指定
 
             if width >= crop_width:
                 # 左端からcrop_widthピクセルを切り出す
