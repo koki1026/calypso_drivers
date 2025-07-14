@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'camera_publisher_pkg'
+package_name = 'lowrance_publisher_pkg'
 
 setup(
     name=package_name,
@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'camera_publisher = camera_publisher_pkg.camera_publisher:main',
+            'lowrance_publisher = lowrance_publisher_pkg.lowrance_publisher:main',
         ],
     },
 )

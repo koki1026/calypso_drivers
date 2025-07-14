@@ -6,9 +6,9 @@ import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 
-class CameraPublisher(Node):
+class LowrancePublisher(Node):
     def __init__(self):
-        super().__init__('camera_publisher')
+        super().__init__('lowrance_publisher')
         self.publisher_ = self.create_publisher(Image, '/lowrance/image_raw', 10)
         self.timer = self.create_timer(0.1, self.timer_callback)  # 10Hz
         self.cap = cv2.VideoCapture(4)
@@ -31,7 +31,7 @@ class CameraPublisher(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = CameraPublisher()
+    node = LowrancePublisher()
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
