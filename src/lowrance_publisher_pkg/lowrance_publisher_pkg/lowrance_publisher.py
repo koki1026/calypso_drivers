@@ -25,7 +25,17 @@ class LowrancePublisher(Node):
     def timer_callback(self):
         ret, frame = self.cap.read()
         if ret:
-            msg = self.bridge.cv2_to_imgmsg(frame, encoding='bgr8')
+            height, width, _ = frame.shape
+            if width >= 480:
+                # 横方向中央をトリミング（1280x480 → 480x480）
+                center_x = width // 2
+                half_crop = 240
+                cropped = frame[:, center_x - half_crop:center_x + half_crop]
+            else:
+                self.get_logger().warn(f'フレーム幅が480未満のためトリミングできません（現在: {width}px）')
+                cropped = frame
+            
+            msg = self.bridge.cv2_to_imgmsg(cropped, encoding='bgr8')
             self.publisher_.publish(msg)
         else:
             self.get_logger().warn('カメラフレームの取得に失敗しました')
