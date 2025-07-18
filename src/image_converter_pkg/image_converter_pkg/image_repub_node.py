@@ -4,6 +4,7 @@ from sensor_msgs.msg import Image, CompressedImage
 from cv_bridge import CvBridge
 import cv2
 import time
+from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy
 
 class ImageRepubNode(Node):
     def __init__(self):
@@ -16,6 +17,13 @@ class ImageRepubNode(Node):
             '/thermal_image': '/thermal_image/compressed'
         }
 
+        qos_profile_best_effort = QoSProfile(
+            reliability=ReliabilityPolicy.BEST_EFFORT,
+            durability=DurabilityPolicy.VOLATILE,
+            history=HistoryPolicy.KEEP_LAST,
+            depth=10
+        )
+        
         self.subscribers_dict = {}
         self.publishers_dict = {}
         self.last_pub_times = {}

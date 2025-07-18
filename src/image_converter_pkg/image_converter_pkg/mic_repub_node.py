@@ -8,10 +8,12 @@ from functools import partial
 class MicRepubNode(Node):
     """
     Float32MultiArray --> Float32MultiArray
+    /velodyne_points を受信している間、/velodyne_points/compressed に1HzでBoolを配信
     """
     def __init__(self):
         super().__init__('mic_repub_node')
 
+        # ===== 既存のマイク関連の初期化 =====
         self.topics = {
             '/mic1/audio': '/mic1/audio/compressed',
             '/mic2/audio': '/mic2/audio/compressed',
@@ -26,7 +28,24 @@ class MicRepubNode(Node):
         self.subscriptions_ = []
         self.publishers_ = {}
 
+        self.get_logger().info('ノードを初期化しています...')
+
+        for input_topic, output_topic in self.topics.items():
+            self.publishers_[input_topic] = self.create_publisher(Float32MultiArray, output_topic, 10)
+            callback = partial(self.listener_callback, input_topic=input_topic)
+            subscription = self.create_subscription(
+                Float32MultiArray,
+                input_topic,
+                callback,
+                10)
+            self.subscriptions_.append(subscription)
+            self.get_logger().info(f'購読設定完了: "{input_topic}" -> "{output_topic}"')
+
+        # ===== ここからVelodyne関連の機能 =====
+        # Velodyne用Publisherの作成
         self.velodyne_publisher_ = self.create_publisher(Bool, '/velodyne_points/compressed', 10)
+
+        # Velodyne用Subscriberの作成
 
         self.velodyne_subscription_ = self.create_subscription(
             PointCloud2,
@@ -35,38 +54,21 @@ class MicRepubNode(Node):
             10)
         self.get_logger().info('購読設定完了: "/velodyne_points"')
 
+        # 1Hzで配信するためのタイマー
         self.velodyne_publish_timer_ = None
+        # サブスクライブが途切れたことを検知するためのタイマー
         self.velodyne_watchdog_timer_ = None
+        # タイムアウト時間（秒）
         self.VELODYNE_TIMEOUT_SEC = 2.0
-
-        self.get_logger().info('ノードを初期化しています...')
-
-        # 定義されたトピックのペアに基づいて購読と配信を設定
-        for input_topic, output_topic in self.topics.items():
-            # 各出力トピックに対応するPublisherを作成し、辞書に保存
-            self.publishers_[input_topic] = self.create_publisher(Float32MultiArray, output_topic, 10)
-            
-            # Subscriberを作成。コールバック関数に、対応する入力トピック名を渡す
-            callback = partial(self.listener_callback, input_topic=input_topic)
-            
-            subscription = self.create_subscription(
-                Float32MultiArray,
-                input_topic,
-                callback,
-                10)
-            
-            self.subscriptions_.append(subscription) # GCに回収されないようにリストで保持
-            self.get_logger().info(f'購読設定完了: "{input_topic}" -> "{output_topic}"')
+        # ===== Velodyne関連ここまで =====
 
     def listener_callback(self, msg: Float32MultiArray, input_topic: str):
         """
-        メッセージを受信した際のコールバック関数
+        メッセージを受信した際のコールバック関数 (既存の機能)
         """
-        # 受信したデータをNumpy配列に変換
         input_array = np.array(msg.data, dtype=np.float32)
         n = len(input_array)
-        
-        # 配列の要素が8個未満の場合は警告を出し、処理をスキップ
+
         if n < 8:
             self.get_logger().warn(
                 f'トピック "{input_topic}" で受信した配列の要素数({n})が8未満です。処理をスキップします。')
@@ -84,11 +86,13 @@ class MicRepubNode(Node):
         output_msg.data = header_values.tolist()
         publisher.publish(output_msg)
 
+
+    # ===== ここから変更・追加したメソッド =====
     def velodyne_callback(self, msg: PointCloud2):
         """
-        /velodyne_points を受信した際のコールバック関数。
-        最初のメッセージ受信時に1Hzのタイマーを開始する。
+        /velodyne_points を受信するたびに呼び出されるコールバック関数。
         """
+        # パブリッシュ用のタイマーが作動していなければ、開始する
         if self.velodyne_publish_timer_ is None or self.velodyne_publish_timer_.is_canceled():
             self.get_logger().info(
                 '"/velodyne_points" のメッセージを検知。'
@@ -128,6 +132,7 @@ class MicRepubNode(Node):
         # 監視用タイマーも停止（念のため）
         if self.velodyne_watchdog_timer_ is not None:
             self.velodyne_watchdog_timer_.cancel()
+    # ===== 変更・追加ここまで =====
 
 def main(args=None):
     rclpy.init(args=args)
