@@ -24,8 +24,12 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'lake_test_node = my_audio_node.microphone_lake_testing:main',
-            'bag_to_wav_converter = my_audio_node.bag_to_wav_converter:main',
+            
+       
+            'audio_localization_node  = my_audio_node.microphone_lake_testing:main',
+            'microphone_lake_testing = my_audio_node.microphone_lake_testing:main', 
+            'bag_to_wav_saver       = my_audio_node.bag_to_wav_saver:main',
+            'bag_to_wav_converter   = my_audio_node.bag_to_wav_converter:main',
         ],
     },
 )
