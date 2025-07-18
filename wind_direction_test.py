@@ -3,7 +3,7 @@ import time
 
 
 client = ModbusSerialClient(
-    port="/dev/ttyUSB0",
+    port="/dev/ttyUSB1",
     baudrate=9600,
     parity="N",
     stopbits=1,
