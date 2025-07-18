@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'image_repub_node = image_converter_pkg.image_repub_node:main'
+            'image_repub_node = image_converter_pkg.image_repub_node:main',
+            'mic_repub_node = image_converter_pkg.mic_repub_node:main'
         ],
     },
 )
