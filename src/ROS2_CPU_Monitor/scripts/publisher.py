@@ -21,7 +21,7 @@ class SystemMonitorPublisher(Node):
         timer_period = 2.0
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
-        self.last_net_io = psutil.net_io_counters()
+        self.last_net_io_per_nic = psutil.net_io_counters(pernic=True)
         self.last_time = time.time()
         self.get_logger().info('System Monitor Publisher Node has been started.')
 
@@ -40,12 +40,23 @@ class SystemMonitorPublisher(Node):
         self.disk_pub.publish(Float32(data=disk_val))
 
         # --- ネットワーク通信量を計算 & 配信 ---
-        current_net_io = psutil.net_io_counters()
+        current_net_io_per_nic = psutil.net_io_counters(pernic=True)
+        
+        total_sent_bytes = 0
+        total_recv_bytes = 0
+
+        # 各インターフェースの通信量を合計（ループバック 'lo' を除く）
+        for nic_name, nic_stats in current_net_io_per_nic.items():
+            if nic_name != 'lo': # ループバックインターフェースを除外
+                if nic_name in self.last_net_io_per_nic:
+                    total_sent_bytes += (nic_stats.bytes_sent - self.last_net_io_per_nic[nic_name].bytes_sent)
+                    total_recv_bytes += (nic_stats.bytes_recv - self.last_net_io_per_nic[nic_name].bytes_recv)
+
         sent_rate = 0.0
         recv_rate = 0.0
         if delta_time > 0:
-            sent_rate = (current_net_io.bytes_sent - self.last_net_io.bytes_sent) / delta_time
-            recv_rate = (current_net_io.bytes_recv - self.last_net_io.bytes_recv) / delta_time
+            sent_rate = total_sent_bytes / delta_time
+            recv_rate = total_recv_bytes / delta_time
             self.net_sent_pub.publish(Float64(data=sent_rate))
             self.net_recv_pub.publish(Float64(data=recv_rate))
 
@@ -59,7 +70,7 @@ class SystemMonitorPublisher(Node):
         )
 
         # 次回計算のために現在の値を保存
-        self.last_net_io = current_net_io
+        self.last_net_io_per_nic = current_net_io_per_nic
         self.last_time = current_time
 
 def main(args=None):

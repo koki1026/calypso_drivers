@@ -46,6 +46,7 @@ class MicRepubNode(Node):
         self.velodyne_publisher_ = self.create_publisher(Bool, '/velodyne_points/compressed', 10)
 
         # Velodyne用Subscriberの作成
+
         self.velodyne_subscription_ = self.create_subscription(
             PointCloud2,
             '/velodyne_points',
@@ -67,19 +68,24 @@ class MicRepubNode(Node):
         """
         input_array = np.array(msg.data, dtype=np.float32)
         n = len(input_array)
-        
+
         if n < 8:
             self.get_logger().warn(
                 f'トピック "{input_topic}" で受信した配列の要素数({n})が8未満です。処理をスキップします。')
             return
 
+        # 元の配列を8等分するインデックスを計算
         indices = np.linspace(0, n, num=8, endpoint=False, dtype=int)
+        
+        # 計算したインデックスを使って、元の配列から値を抽出
         header_values = input_array[indices]
 
+        # 対応するPublisherを取得してメッセージを配信
         publisher = self.publishers_[input_topic]
         output_msg = Float32MultiArray()
         output_msg.data = header_values.tolist()
         publisher.publish(output_msg)
+
 
     # ===== ここから変更・追加したメソッド =====
     def velodyne_callback(self, msg: PointCloud2):
@@ -127,7 +133,6 @@ class MicRepubNode(Node):
         if self.velodyne_watchdog_timer_ is not None:
             self.velodyne_watchdog_timer_.cancel()
     # ===== 変更・追加ここまで =====
-
 
 def main(args=None):
     rclpy.init(args=args)
