@@ -37,7 +37,7 @@ class VoiceGateNode(Node):
         super().__init__("voice_gate_node")
 
         # ── parameters (defaults for 44.1 kHz; change on launch) ──
-        self.declare_parameter("device_index", 1)   # PortAudio index for OCTA-CAPTURE
+        self.declare_parameter("device_index", 10)   # PortAudio index for OCTA-CAPTURE
         self.declare_parameter("sample_rate", 44100)
         self.declare_parameter("chunk_size", 882)    # 20 ms @ 44.1 kHz
         self.declare_parameter("voice_off_delay", 0.8)
